@@ -10,16 +10,6 @@ A native iOS application that allows users to manage products with features like
   <img src="https://github.com/user-attachments/assets/b8afbe3b-650f-461a-9db9-51eaf94e857a" width="300" alt="Add Product Screen">
 </p>
 
-
-## Tech Stack
-
-- SwiftUI
-- Alamofire for networking
-- Async/Await for concurrency
-- MVVM architecture
-- UserDefaults for persistence
-- Native iOS frameworks
-
 ## 📋 Requirements
 
 - iOS 15.0+
