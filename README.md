@@ -48,7 +48,6 @@ Ensure internet connectivity for API functionality
 
 ```bash
 Clean the build folder: ⌘ + Shift + K
-Clean the build cache: ⌘ + Option + Shift + K
 Re-build the project: ⌘ + B
 ```
 
