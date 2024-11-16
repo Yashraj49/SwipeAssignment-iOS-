@@ -1,4 +1,4 @@
-# SwipeAssignment iOS App
+# SwipeAssignment iOS 
 
 A native iOS application that allows users to manage products with features like listing, adding, searching, and favoriting products.
 
