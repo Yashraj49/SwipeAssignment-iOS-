@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ProductRow: View {
+    // Core properties
     let product: Product
     let onFavorite: () -> Void
     
@@ -17,84 +18,81 @@ struct ProductRow: View {
         product.price * (1 + product.tax/100)
     }
     
+    // MARK: - View Layout
     var body: some View {
-        HStack(spacing: 14) {
+        HStack(spacing: 16) {
             // Product Image
             AsyncImage(url: URL(string: product.image)) { image in
                 image
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(width: 75, height: 75)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.gray.opacity(0.15), lineWidth: 0.5)
-                    )
+                    .frame(width: 85, height: 85)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .shadow(color: .black.opacity(0.08), radius: 4, x: 0, y: 2)
             } placeholder: {
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: 12)
                     .fill(.gray.opacity(0.1))
-                    .frame(width: 75, height: 75)
+                    .frame(width: 85, height: 85)
                     .overlay(
                         Image(systemName: "photo")
-                            .font(.system(size: 18))
+                            .font(.system(size: 20))
                             .foregroundStyle(.secondary)
                     )
             }
             
             // Product Details
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: 8) {
                 Text(product.productName)
-                    .font(.system(size: 17, weight: .medium))
+                    .font(.system(size: 18, weight: .semibold))
                     .lineLimit(1)
                 
                 Text(product.productType)
-                    .font(.system(size: 14))
-                    .foregroundStyle(.secondary.opacity(0.8))
-                    .padding(.vertical, 2)
-                    .padding(.horizontal, 8)
-                    .background(Color.blue.opacity(0.08))
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(.secondary)
+                    .padding(.vertical, 3)
+                    .padding(.horizontal, 10)
+                    .background(Color.blue.opacity(0.1))
                     .clipShape(Capsule())
                 
-                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
                     Text("₹\(product.price.formatted())")
-                        .font(.system(size: 17, weight: .semibold))
+                        .font(.system(size: 19, weight: .bold))
                         .foregroundColor(.blue)
                     
                     Text("+\(product.tax, specifier: "%.1f")%")
-                        .font(.system(size: 13))
-                        .foregroundStyle(.secondary.opacity(0.9))
-                        .padding(.horizontal, 4)
-                        .padding(.vertical, 1)
-                        .background(Color.blue.opacity(0.12))
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color.gray.opacity(0.1))
                         .clipShape(Capsule())
                 }
             }
             
             Spacer()
             
-            // Favorite Button
-            Button(action: onFavorite) {
-                Image(systemName: product.isFavorite ? "heart.fill" : "heart")
-                    .font(.system(size: 17))
-                    .foregroundColor(product.isFavorite ? .red : .gray)
-                    .frame(width: 36, height: 36)
-                    .background(Color.gray.opacity(0.08))
-                    .clipShape(Circle())
+            VStack(spacing: 12) {
+                // Favorite Button
+                Button(action: onFavorite) {
+                    Image(systemName: product.isFavorite ? "heart.fill" : "heart")
+                        .font(.system(size: 18))
+                        .foregroundColor(product.isFavorite ? .red : .gray)
+                        .frame(width: 38, height: 38)
+                        .background(Color.gray.opacity(0.1))
+                        .clipShape(Circle())
+                }
+                .buttonStyle(BorderlessButtonStyle())
+                .scaleEffect(product.isFavorite ? 1.1 : 1.0)
+                .animation(.spring(response: 0.2, dampingFraction: 0.6), value: product.isFavorite)
+                
             }
-            .buttonStyle(BorderlessButtonStyle())
-            .scaleEffect(product.isFavorite ? 1.05 : 1.0)
-            .animation(.spring(response: 0.2), value: product.isFavorite)
-            
-            Image(systemName: "chevron.right")
-                .font(.system(size: 13, weight: .medium))
-                .foregroundStyle(.tertiary)
         }
-        .padding(.vertical, 10)
-        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+        .padding(.horizontal, 16)
         .background {
-            RoundedRectangle(cornerRadius: 14)
+            RoundedRectangle(cornerRadius: 16)
                 .fill(colorScheme == .dark ? Color(.secondarySystemBackground) : .white)
-                .shadow(color: .black.opacity(0.04), radius: 5, x: 0, y: 2)
+                .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 3)
         }
         .padding(.horizontal, 12)
     }

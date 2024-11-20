@@ -34,6 +34,25 @@ struct AddProduct: View {
     @State var isFavorite : Bool = false
     @ObservedObject var viewModel = Manager()
     
+     func handleAddProduct() {
+        let newProduct = Product(
+            productName: productNameString,
+            productType: selectedType.rawValue,
+            price: productPriceDouble,
+            tax: productTaxDouble,
+            image: "",
+            isFavorite: isFavorite
+        )
+        
+        Task {
+            await viewModel.addProduct(newProduct)
+        }
+        
+        selectedType = .phone
+        productNameString = ""
+        productPriceDouble = 0
+        productTaxDouble = 0
+    }
     
     var body: some View {
        
@@ -126,23 +145,7 @@ struct AddProduct: View {
                 
                 // add Button Section
                 Section {
-                    Button {
-                            let newProduct = Product(
-                                productName: productNameString,
-                                productType: selectedType.rawValue,
-                                price: productPriceDouble,
-                                tax: productTaxDouble,
-                                image: "", isFavorite: isFavorite
-                            )
-                            Task {
-                                await viewModel.postMethod(product: newProduct)
-                            }
-                            selectedType = .phone
-                            productNameString = ""
-                            productPriceDouble = 0
-                            productTaxDouble = 0
-                        
-                    } label: {
+                    Button(action: handleAddProduct) {
                         HStack {
                             Spacer()
                             Image(systemName: "plus.circle.fill")

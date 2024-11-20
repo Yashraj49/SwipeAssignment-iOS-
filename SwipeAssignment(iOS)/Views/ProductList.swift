@@ -13,11 +13,15 @@ struct ProductList: View {
     @State var showAddProduct = false
     @State var showAlert = false
     
+    var allProducts: [Product] {
+        viewModel.products + viewModel.offlineProducts
+    }
+    
     var filteredProducts: [Product] {
         if searchText.isEmpty {
-            return viewModel.products
+            return allProducts
         }
-        return viewModel.products.filter {
+        return allProducts.filter {
             $0.productName.lowercased().contains(searchText.lowercased()) ||
             $0.productType.lowercased().contains(searchText.lowercased())
         }
@@ -31,7 +35,7 @@ struct ProductList: View {
                 
                 ScrollView {
                     VStack(spacing: 16) {
-                        ForEach(filteredProducts) { product in
+                        ForEach(filteredProducts , id:\.self) { product in
                             ProductRow(product: product) {
                                 withAnimation(.spring(response: 0.3)) {
                                     viewModel.toggleFavorite(product)

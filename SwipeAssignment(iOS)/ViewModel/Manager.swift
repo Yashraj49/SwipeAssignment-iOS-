@@ -17,6 +17,9 @@ class Manager: ObservableObject {  // MARK: - Published Properties  // Observabl
     @Published var isLoading = false
     @Published var productTimestamps: [String: Date] = [:]
     
+    @Published private(set) var offlineProducts: [Product] = []
+    private let networkMonitor = NetworkMonitor()
+    
     private let favoritesKey = "FavoriteProducts"
     
     init() {
@@ -24,6 +27,8 @@ class Manager: ObservableObject {  // MARK: - Published Properties  // Observabl
         alertDescription = ""
         showAlert = false
         loadFavorites()
+        loadOfflineProducts()
+        syncOfflineProductsIfNeeded()
     }
     
     // load favorites from UserDefaults
@@ -64,6 +69,36 @@ class Manager: ObservableObject {  // MARK: - Published Properties  // Observabl
         }
     }
     
+    private func loadOfflineProducts() {
+        offlineProducts = CoreDataManager.shared.fetchOfflineProducts()
+    }
+    
+    private func syncOfflineProductsIfNeeded() {
+        guard networkMonitor.isConnected, !offlineProducts.isEmpty else { return }
+        
+        Task {
+            for product in offlineProducts {
+                await postMethod(product: product)
+                CoreDataManager.shared.deleteOfflineProduct(product)
+            }
+            await MainActor.run {
+                offlineProducts = []
+            }
+        }
+    }
+    
+    func addProduct(_ product: Product) async {
+        if networkMonitor.isConnected {
+            await postMethod(product: product)
+        } else {
+            CoreDataManager.shared.saveOfflineProduct(product)
+            await MainActor.run {
+                offlineProducts.append(product)
+                showAlert = true
+                alertDescription = "Product saved offline. Will sync when connected."
+            }
+        }
+    }
    
     func getProducts() async {
         DispatchQueue.main.async {
@@ -117,7 +152,7 @@ class Manager: ObservableObject {  // MARK: - Published Properties  // Observabl
     func postMethod(product: Product) async {
         
         let parameters: [String: String] = [
-            "product_name": product.productName,        
+            "product_name": product.productName,
             "product_type": product.productType,
             "price": String(product.price),
             "tax": String(product.tax)

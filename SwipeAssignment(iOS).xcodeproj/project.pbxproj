@@ -24,7 +24,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		804D5FB62CE0B2A600D6F5F5 /* SwipeAssignment(iOS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "SwipeAssignment(iOS).app"; path = "/Users/yashraj/Downloads/Projects/SwipeAssignment(iOS)/build/Debug-iphoneos/SwipeAssignment(iOS).app"; sourceTree = "<absolute>"; };
+		807B2EBF2CEDC28400F695C9 /* SwipeAssignment(iOS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SwipeAssignment(iOS).app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -58,6 +58,7 @@
 		804D5FB72CE0B2A600D6F5F5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				807B2EBF2CEDC28400F695C9 /* SwipeAssignment(iOS).app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -86,7 +87,7 @@
 				804D5FD92CE0CDF800D6F5F5 /* Alamofire */,
 			);
 			productName = "SwipeAssignment(iOS)";
-			productReference = 804D5FB62CE0B2A600D6F5F5 /* SwipeAssignment(iOS).app */;
+			productReference = 807B2EBF2CEDC28400F695C9 /* SwipeAssignment(iOS).app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
