@@ -20,83 +20,74 @@ struct ProductRow: View {
     
     // MARK: - View Layout
     var body: some View {
-        HStack(spacing: 16) {
-            // Product Image
-            AsyncImage(url: URL(string: product.image)) { image in
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 85, height: 85)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .shadow(color: .black.opacity(0.08), radius: 4, x: 0, y: 2)
-            } placeholder: {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(.gray.opacity(0.1))
-                    .frame(width: 85, height: 85)
-                    .overlay(
-                        Image(systemName: "photo")
-                            .font(.system(size: 20))
-                            .foregroundStyle(.secondary)
-                    )
-            }
-            
-            // Product Details
-            VStack(alignment: .leading, spacing: 8) {
-                Text(product.productName)
-                    .font(.system(size: 18, weight: .semibold))
-                    .lineLimit(1)
+            HStack(spacing: 12) {
+                // Product Image
+                AsyncImage(url: URL(string: product.image)) { image in
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 56, height: 56)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                } placeholder: {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(.gray.opacity(0.1))
+                        .frame(width: 56, height: 56)
+                        .overlay(
+                            Image(systemName: "photo")
+                                .font(.system(size: 16))
+                                .foregroundStyle(.secondary)
+                        )
+                }
                 
-                Text(product.productType)
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundStyle(.secondary)
-                    .padding(.vertical, 3)
-                    .padding(.horizontal, 10)
-                    .background(Color.blue.opacity(0.1))
-                    .clipShape(Capsule())
-                
-                HStack(alignment: .firstTextBaseline, spacing: 8) {
-                    Text("₹\(product.price.formatted())")
-                        .font(.system(size: 19, weight: .bold))
-                        .foregroundColor(.blue)
+                // Product Details
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(product.productName)
+                        .font(.system(size: 15, weight: .medium))
+                        .lineLimit(1)
                     
-                    Text("+\(product.tax, specifier: "%.1f")%")
-                        .font(.system(size: 13, weight: .medium))
+                    Text(product.productType)
+                        .font(.system(size: 12))
                         .foregroundStyle(.secondary)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
-                        .background(Color.gray.opacity(0.1))
+                        .background(Color.blue.opacity(0.08))
                         .clipShape(Capsule())
+                    
+                    HStack(alignment: .firstTextBaseline, spacing: 4) {
+                        Text("₹\(product.price.formatted())")
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(.blue)
+                        
+                        Text("+\(product.tax, specifier: "%.1f")%")
+                            .font(.system(size: 11))
+                            .foregroundStyle(.secondary)
+                    }
                 }
-            }
-            
-            Spacer()
-            
-            VStack(spacing: 12) {
-                // Favorite Button
+                
+                Spacer()
+                
                 Button(action: onFavorite) {
                     Image(systemName: product.isFavorite ? "heart.fill" : "heart")
-                        .font(.system(size: 18))
+                        .font(.system(size: 14))
                         .foregroundColor(product.isFavorite ? .red : .gray)
-                        .frame(width: 38, height: 38)
-                        .background(Color.gray.opacity(0.1))
+                        .frame(width: 28, height: 28)
+                        .background(Color.gray.opacity(0.06))
                         .clipShape(Circle())
                 }
                 .buttonStyle(BorderlessButtonStyle())
                 .scaleEffect(product.isFavorite ? 1.1 : 1.0)
                 .animation(.spring(response: 0.2, dampingFraction: 0.6), value: product.isFavorite)
-                
             }
+            .padding(.vertical, 8)
+            .padding(.horizontal, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(colorScheme == .dark ? Color(.tertiarySystemBackground) : .white)
+                    .shadow(color: .black.opacity(0.03), radius: 2, x: 0, y: 1)
+            )
         }
-        .padding(.vertical, 12)
-        .padding(.horizontal, 16)
-        .background {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(colorScheme == .dark ? Color(.secondarySystemBackground) : .white)
-                .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 3)
-        }
-        .padding(.horizontal, 12)
     }
-}
+
 
 #Preview {
     ZStack {

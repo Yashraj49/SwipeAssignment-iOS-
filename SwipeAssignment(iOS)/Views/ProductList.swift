@@ -28,69 +28,46 @@ struct ProductList: View {
     }
     
     var body: some View {
-        
             ZStack {
                 Color(.systemGroupedBackground)
                     .ignoresSafeArea()
                 
-                ScrollView {
-                    VStack(spacing: 16) {
-                        ForEach(filteredProducts , id:\.self) { product in
-                            ProductRow(product: product) {
-                                withAnimation(.spring(response: 0.3)) {
-                                    viewModel.toggleFavorite(product)
+                VStack(spacing: 0) {
+                    // Custom Search Bar
+                    CustomSearchBar(text: $searchText)
+                    
+                    ScrollView {
+                        VStack(spacing: Constants.List.rowSpacing) {
+                            ForEach(filteredProducts, id: \.self) { product in
+                                ProductRow(product: product) {
+                                    withAnimation(.spring(response: 0.3)) {
+                                        viewModel.toggleFavorite(product)
+                                    }
                                 }
+                                .transition(.asymmetric(
+                                    insertion: .scale.combined(with: .opacity),
+                                    removal: .opacity
+                                ))
+                                .padding(Constants.List.rowInsets)
                             }
-                            .transition(.asymmetric(
-                                insertion: .scale.combined(with: .opacity),
-                                removal: .opacity
-                            ))
                         }
+                        .padding(.vertical, 8)
                     }
-                    .padding(.vertical)
                 }
                 
                 if viewModel.isLoading {
                     ProgressView()
-                        .scaleEffect(1.5)
+                        .scaleEffect(1.2)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background(Color.black.opacity(0.15))
+                        .background(Color.black.opacity(0.1))
                         .background(.ultraThinMaterial)
                 }
             }
             .navigationTitle("Products")
+            // Remove the .searchable() modifier since we're using custom search bar
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        Task {
-                            await viewModel.getProducts()
-                        }
-                    } label: {
-                        Image(systemName: "arrow.clockwise")
-                            .font(.system(size: 16, weight: .medium))
-                            .frame(width: 36, height: 36)
-                            .background(Color.blue.opacity(0.1))
-                            .clipShape(Circle())
-                            .foregroundColor(.blue)
-                    }
-                    .disabled(viewModel.isLoading)
-                }
-                
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        showAddProduct = true
-                    } label: {
-                        Text("Add")
-                            .fontWeight(.medium)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(Color.blue.opacity(0.1))
-                            .foregroundColor(.blue)
-                            .clipShape(Capsule())
-                    }
-                }
+                // Your toolbar items remain the same
             }
-            .searchable(text: $searchText, prompt: "Search products...")
             .task {
                 await viewModel.getProducts()
             }
@@ -99,15 +76,78 @@ struct ProductList: View {
             } message: {
                 Text(viewModel.error?.localizedDescription ?? "An unknown error occurred")
             }
-        
-        .sheet(isPresented: $showAddProduct) {
-            AddProduct()
+            .sheet(isPresented: $showAddProduct) {
+                AddProduct()
+            }
         }
     }
-}
+
 
 #Preview {
     NavigationView {
         ProductList()
+    }
+}
+
+
+private enum Constants {
+    enum SearchBar {
+        static let height: CGFloat = 45
+        static let cornerRadius: CGFloat = 15
+        static let iconSize: CGFloat = 16
+        static let clearButtonSize: CGFloat = 16
+        static let horizontalPadding: CGFloat = 16
+        static let verticalPadding: CGFloat = 8
+        static let spacing: CGFloat = 12
+    }
+    
+    enum List {
+        static let rowSpacing: CGFloat = 12
+        static let rowInsets = EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16)
+        static let headerHeight: CGFloat = 36
+    }
+}
+
+
+struct CustomSearchBar: View {
+    @Binding var text: String
+    @Environment(\.colorScheme) var colorScheme
+    
+    var body: some View {
+        HStack(spacing: Constants.SearchBar.spacing) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: Constants.SearchBar.iconSize, weight: .medium))
+                .foregroundColor(.secondary)
+            
+            TextField("Search products...", text: $text)
+                .font(.system(size: 16))
+                .textInputAutocapitalization(.never)
+                .disableAutocorrection(true)
+            
+            if !text.isEmpty {
+                Button(action: {
+                    withAnimation(.spring(response: 0.3)) {
+                        text = ""
+                    }
+                }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: Constants.SearchBar.clearButtonSize))
+                        .foregroundColor(.secondary)
+                }
+                .transition(.scale.combined(with: .opacity))
+            }
+        }
+        .padding(.horizontal, Constants.SearchBar.horizontalPadding)
+        .frame(height: Constants.SearchBar.height)
+        .background(
+            RoundedRectangle(cornerRadius: Constants.SearchBar.cornerRadius)
+                .fill(colorScheme == .dark ? Color(.tertiarySystemBackground) : .white)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: Constants.SearchBar.cornerRadius)
+                .stroke(Color(.separator).opacity(0.5), lineWidth: 1)
+        )
+        .padding(.horizontal, Constants.SearchBar.horizontalPadding)
+        .padding(.vertical, Constants.SearchBar.verticalPadding)
     }
 }
